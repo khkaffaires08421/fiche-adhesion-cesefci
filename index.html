@@ -32,6 +32,11 @@ input[type=text],input[type=tel],input[type=date]{width:100%;font:inherit;paddin
 #sig{width:100%;max-width:320px;height:110px;border:1px solid var(--line);background:#fff;touch-action:none;display:block}
 .row2{display:grid;grid-template-columns:2fr 1fr;gap:12px}
 .pj{margin-top:18px}.pj b{text-decoration:underline}
+.cni-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+.cni-card{border:1px dashed var(--line);padding:10px;border-radius:8px;background:var(--field)}
+.cni-card img{display:block;width:100%;max-height:190px;object-fit:contain;margin-top:8px;background:#fff}
+.cni-card input{width:100%;margin-top:6px}
+@media(max-width:600px){.cni-grid{grid-template-columns:1fr}}
 .foot{margin-top:22px;border-top:2px solid var(--green);padding-top:8px;text-align:center;color:var(--green);font-weight:700;font-size:.9rem}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 #msg{margin-top:10px;font-size:.95rem;color:var(--muted)}
@@ -74,7 +79,14 @@ input[type=text],input[type=tel],input[type=date]{width:100%;font:inherit;paddin
  <label>Signature (dessinez avec le doigt ou la souris)</label>
  <canvas id="sig" width="640" height="220"></canvas>
  <button class="btn" id="clr" type="button">Effacer la signature</button>
- <div class="pj"><b>Pièce jointe</b><br>Photocopie de pièce d’identité en cours de validité</div>
+ <div class="pj"><b>Pièce jointe : copie de la CNI</b><br>
+  Veuillez importer les deux faces de votre carte nationale d’identité (recto et verso).
+  <div class="cni-grid">
+   <div class="cni-card"><label for="cniRecto"><b>CNI – Recto (face avant)</b></label><input id="cniRecto" type="file" accept="image/*"><img id="previewRecto" alt="Aperçu CNI recto" hidden></div>
+   <div class="cni-card"><label for="cniVerso"><b>CNI – Verso (face arrière)</b></label><input id="cniVerso" type="file" accept="image/*"><img id="previewVerso" alt="Aperçu CNI verso" hidden></div>
+  </div>
+  <small>Formats acceptés : JPG, PNG ou photo prise directement avec votre téléphone.</small>
+ </div>
  <div class="actions">
   <button class="btn main" id="send" type="button">Envoyer ma fiche</button>
   <button class="btn" id="pdf" type="button">Télécharger en PDF</button>
@@ -94,6 +106,15 @@ const LOGO="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHB
 const T="Autorise la Direction de la Solde à opérer au profit du Syndicat CESEFCI, un précompte d’un montant de quatre mille francs (4000 FCFA) sur mon traitement afin de couvrir mes cotisations Syndicales annuelles par année.";
 $("dt").valueAsDate=new Date();
 const say=t=>{$("msg").textContent=t};
+const cniFiles={recto:"",verso:""};
+function loadCni(inputId,previewId,key){
+ $(inputId).addEventListener("change",e=>{const f=e.target.files&&e.target.files[0];if(!f)return;
+  if(!f.type.startsWith("image/")){say("Veuillez choisir une image JPG ou PNG pour la CNI.");e.target.value="";return}
+  if(f.size>8*1024*1024){say("La photo de la CNI est trop volumineuse (maximum 8 Mo par face).");e.target.value="";return}
+  const reader=new FileReader();reader.onload=()=>{cniFiles[key]=reader.result;$(previewId).src=reader.result;$(previewId).hidden=false;say("Face "+(key==="recto"?"recto":"verso")+" de la CNI importée.")};reader.readAsDataURL(f);
+ });
+}
+loadCni("cniRecto","previewRecto","recto");loadCni("cniVerso","previewVerso","verso");
 
 /* ---------- Photo : recadrage 3:4 + amélioration automatique ---------- */
 const pv=$("pv"),pc=pv.getContext("2d");let orig=null,hasPhoto=false;
@@ -116,7 +137,7 @@ function render(){if(!orig)return;const d=new ImageData(new Uint8ClampedArray(or
   for(let y=1;y<599;y++)for(let x=1;x<W-1;x++)for(let c=0;c<3;c++){const i=(y*W+x)*4+c;
    const e=4*o[i]-o[i-4]-o[i+4]-o[i-W*4]-o[i+W*4];p[i]=Math.min(Math.max(o[i]+A*.6*e,0),255)}}
  pc.putImageData(d,0,0)}
-claude.use("sample").then(async s=>{try{const l=s&&await s.limits();if(l&&l.images)$("ia").hidden=false;$("ia").onclick=async()=>{
+if(typeof claude!=="undefined"&&claude.use)claude.use("sample").then(async s=>{try{const l=s&&await s.limits();if(l&&l.images)$("ia").hidden=false;$("ia").onclick=async()=>{
  $("iaout").textContent="Analyse en cours…";try{const b=await new Promise(r=>pv.toBlob(r,"image/jpeg",.8));
  const r=await s("Cette photo est destinée à une fiche d’adhésion (photo d’identité). En 2 phrases courtes en français, dis si le visage est net, centré, bien éclairé, et donne un conseil si besoin. Ne décris pas l’identité de la personne.",{images:[b],modelTier:"quick"});
  $("iaout").textContent=r.text}catch(e){$("iaout").textContent="Analyse indisponible."}}}catch(e){}}).catch(()=>{});
@@ -134,13 +155,14 @@ function collect(){const civ=document.querySelector("input[name=civ]:checked").v
  const x=sc.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,320,110);x.drawImage(sg,0,0,320,110);
  const ph=document.createElement("canvas");ph.width=300;ph.height=400;ph.getContext("2d").drawImage(pv,0,0,300,400);
  return{civ,nom:$("nom").value.trim(),mat:$("mat").value.trim(),min:$("min").value.trim(),sec:$("sec").value.trim(),srv:$("srv").value.trim(),loc:$("loc").value.trim(),con:$("con").value.trim(),lieu:$("lieu").value.trim(),date:$("dt").value,
-  photo:hasPhoto?ph.toDataURL("image/jpeg",.8):"",sign:signed?sc.toDataURL("image/jpeg",.7):"",created:Date.now()}}
+  photo:hasPhoto?ph.toDataURL("image/jpeg",.8):"",sign:signed?sc.toDataURL("image/jpeg",.7):"",cniRecto:cniFiles.recto,cniVerso:cniFiles.verso,created:Date.now()}}
 const fr=d=>d?d.split("-").reverse().join("/"):"";
 const rows=d=>[["Mme – Mlle – M",d.civ+" "+d.nom],["Matricule",d.mat],["Ministère",d.min],["Section syndicale (IEPP / DRENA)",d.sec],["Service",d.srv],["Localité",d.loc],["Contacts",d.con]];
 const u8=u=>Uint8Array.from(atob(u.split(",")[1]),c=>c.charCodeAt(0));
 const fname=(d,e)=>"Fiche_adhesion_CESEFCI_"+(d.nom||"adherent").replace(/[^\w]+/g,"_")+"."+e;
-async function save(blob,name){const dl=await claude.use("downloads");if(!dl){say("Téléchargement indisponible dans ce navigateur.");return}
- try{await dl.save({filename:name,data:blob});say("Fichier prêt : "+name)}catch(e){if(e.code!=="declined")say("Échec du téléchargement ("+(e.code||"erreur")+").")}}
+async function save(blob,name){
+ try{const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);say("Téléchargement lancé : "+name)}
+ catch(e){say("Échec du téléchargement. Veuillez réessayer.")}}
 
 /* ---------- PDF ---------- */
 async function makePdf(d){const{jsPDF}=window.jspdf,p=new jsPDF({unit:"mm",format:"a4"}),G=[27,107,58];
@@ -156,7 +178,7 @@ async function makePdf(d){const{jsPDF}=window.jspdf,p=new jsPDF({unit:"mm",forma
  y+=4;p.text(p.splitTextToSize(T,178),16,y);y+=26;
  p.text("Fait à "+d.lieu+"   le "+fr(d.date),110,y);y+=6;p.setFont("times","bold");p.text("Signature",125,y+4);
  if(d.sign)p.addImage(d.sign,"JPEG",110,y+6,50,17);
- p.text("Pièce jointe",16,y+34);p.setFont("times","normal");p.setFontSize(10);p.text("Photocopie de pièce d’identité en cours de validité",16,y+39);
+ p.text("Pièce jointe",16,y+34);p.setFont("times","normal");p.setFontSize(10);p.text("Copie de la CNI jointe en annexe.",16,y+39);
  p.setDrawColor(...G);p.line(14,280,196,280);p.setFont("times","bold");p.setTextColor(...G);p.text("Siege Social Abidjan, Yopougon-Sideci. Email: cesefci@gmail.com",105,286,{align:"center"});
  return p.output("blob")}
 
@@ -174,7 +196,11 @@ async function makeDoc(d){const X=window.docx,F="Times New Roman",G="1B6B3A";
  ch.push(new X.Paragraph({alignment:X.AlignmentType.JUSTIFIED,spacing:{before:200,after:300},children:[new X.TextRun({text:T,font:F,size:22})]}),
  P("Fait à "+d.lieu+"   le "+fr(d.date),{al:X.AlignmentType.RIGHT}),P("Signature",{b:1,al:X.AlignmentType.RIGHT}));
  if(d.sign)ch.push(new X.Paragraph({alignment:X.AlignmentType.RIGHT,children:[new X.ImageRun({type:"jpg",data:u8(d.sign),transformation:{width:150,height:52}})]}));
- ch.push(P("Pièce jointe",{b:1}),P("Photocopie de pièce d’identité en cours de validité",{s:20}));
+ ch.push(P("Pièce jointe",{b:1}),P("Copie de la CNI jointe en annexe.",{s:20}));
+ if(d.cniRecto||d.cniVerso){ch.push(new X.Paragraph({pageBreakBefore:true,children:[new X.TextRun({text:"ANNEXE – PIÈCE D’IDENTITÉ",bold:true,font:F,size:28,color:G})]}));
+  if(d.cniRecto)ch.push(P("CNI – RECTO",{b:1}),new X.Paragraph({children:[new X.ImageRun({type:"jpg",data:u8(d.cniRecto),transformation:{width:420,height:260}})]}));
+  if(d.cniVerso)ch.push(P("CNI – VERSO",{b:1}),new X.Paragraph({children:[new X.ImageRun({type:"jpg",data:u8(d.cniVerso),transformation:{width:420,height:260}})]}));
+ }
  const doc=new X.Document({sections:[{properties:{page:{size:{width:11906,height:16838}}},children:ch,footers:{default:new X.Footer({children:[P("Siege Social Abidjan, Yopougon-Sideci. Email: cesefci@gmail.com",{b:1,c:G,al:X.AlignmentType.CENTER,s:20})]})}}]});
  return X.Packer.toBlob(doc)}
 
@@ -192,10 +218,10 @@ $("wa").onclick=async()=>{const d=need();if(!d)return;
  try{const f=new File([await makePdf(d)],fname(d,"pdf"),{type:"application/pdf"});
   if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],text:txt});say("Choisissez WhatsApp puis le contact du syndicat pour envoyer votre fiche PDF.");return}}catch(e){if(e&&e.name==="AbortError")return}
  window.open("https://wa.me/"+WA+"?text="+encodeURIComponent(txt),"_blank");
- say("WhatsApp s’ouvre avec votre message. Pensez à joindre aussi votre fiche PDF (bouton « Télécharger en PDF »), votre photo et votre pièce d’identité.")};
+ say("WhatsApp s’ouvre avec votre message. Pensez à joindre aussi votre fiche PDF (bouton « Télécharger en PDF »), votre photo ainsi que les deux faces de votre CNI.")};
 
 /* ---------- Espace administrateur ---------- */
-claude.use("user").then(async u=>{if(!u||!(await u.isOwner()))return;const db=await claude.use("db");if(!db)return;$("admin").style.display="block";
+if(typeof claude!=="undefined"&&claude.use)claude.use("user").then(async u=>{if(!u||!(await u.isOwner()))return;const db=await claude.use("db");if(!db)return;$("admin").style.display="block";
  db.collection("adhesions").onSnapshot(s=>{const l=$("list");l.textContent="";if(!s.docs.length)l.textContent="Aucune fiche reçue pour le moment.";
   s.docs.forEach(x=>{const d=x.data(),r=document.createElement("div");r.className="it";const t=document.createElement("span");t.textContent=d.civ+" "+d.nom+" · "+d.mat+" · "+d.loc;r.appendChild(t);
    const b=(n,f)=>{const e=document.createElement("button");e.className="btn";e.textContent=n;e.onclick=f;r.appendChild(e)};
