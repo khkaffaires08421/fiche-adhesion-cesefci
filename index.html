@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fiche d’adhésion CESEFCI</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#eef3ee;--paper:#fff;--ink:#1c1c1c;--green:#1b6b3a;--line:#9aa;--muted:#555;--field:#f7faf7}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#111611;--paper:#1b211b;--ink:#e8ece8;--green:#5fc283;--line:#556;--muted:#a9b3a9;--field:#232a23}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#111611;--paper:#1b211b;--ink:#e8ece8;--green:#5fc283;--line:#556;--muted:#a9b3a9;--field:#232a23}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Times New Roman",Georgia,serif}
+.sheet{max-width:800px;margin:16px auto;background:var(--paper);padding:24px clamp(14px,4vw,40px);border:1px solid var(--line)}
+.head{display:flex;gap:12px;align-items:center;color:var(--green);font-weight:700;border-bottom:2px solid var(--green);padding-bottom:8px}
+.head img{width:64px;height:auto}.head small{display:block;font-size:.95rem}
+.info{margin:14px 0;font-size:.95rem}.info i{font-style:italic}
+.title{border:1px solid var(--ink);text-align:center;font-weight:700;padding:8px;margin:18px auto;max-width:560px;text-transform:uppercase}
+h2{font-size:1.1rem;margin:16px 0 8px}
+.grid{display:grid;grid-template-columns:1fr 150px;gap:16px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+label{display:block;margin:8px 0 2px;font-size:.95rem}
+input[type=text],input[type=tel],input[type=date]{width:100%;font:inherit;padding:8px;border:0;border-bottom:1px solid var(--ink);background:var(--field);color:var(--ink)}
+.civ{display:flex;gap:16px;flex-wrap:wrap}.civ label{display:inline-flex;gap:6px;margin:4px 0}
+.photo{text-align:center}
+#pv{width:150px;height:200px;border:1px dashed var(--line);background:var(--field);display:block;margin:0 auto 6px}
+.btn{font:inherit;padding:9px 14px;border:1px solid var(--green);background:var(--paper);color:var(--green);border-radius:6px;cursor:pointer;margin:3px 0}
+.btn.main{background:var(--green);color:#fff}.btn:disabled{opacity:.5}
+.tools{font-size:.85rem;text-align:left;margin-top:6px}.tools input[type=range]{width:100%}
+.para{text-align:justify;margin:16px 0}
+#sig{width:100%;max-width:320px;height:110px;border:1px solid var(--line);background:#fff;touch-action:none;display:block}
+.row2{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+.pj{margin-top:18px}.pj b{text-decoration:underline}
+.foot{margin-top:22px;border-top:2px solid var(--green);padding-top:8px;text-align:center;color:var(--green);font-weight:700;font-size:.9rem}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+#msg{margin-top:10px;font-size:.95rem;color:var(--muted)}
+#admin{max-width:800px;margin:16px auto;background:var(--paper);border:1px solid var(--green);padding:16px;display:none}
+#admin .it{display:flex;justify-content:space-between;gap:8px;align-items:center;border-top:1px solid var(--line);padding:6px 0;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="sheet">
+ <div class="head"><img alt="Logo CESEFCI" src="data:image/jpeg;base64,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"><div>Coordination des Enseignants et Encadrants du Secteur Education Formation de Côte d’Ivoire<small>0546506074/0758043086</small></div></div>
+ <div class="info">Récépissé N°102/DAA/DAJRI/2024 : <b>PORTANT DECLARATION DE LA CESEFCI</b><br>Siège Social : <i>Abidjan Yopougon</i><br>Boîte postale : &nbsp;&nbsp;&nbsp; Tél : <i>0758043086</i><br>Cel : 0546506074<br>E-mail : cesefci@gmail.com/israel639mea@mail.com/</div>
+ <div class="title">Fiche d’adhésion et d’autorisation de précompte</div>
+ <h2>Je soussigné(e),</h2>
+ <div class="grid">
+  <div>
+   <div class="civ"><label><input type="radio" name="civ" value="Mme"> Mme</label><label><input type="radio" name="civ" value="Mlle"> Mlle</label><label><input type="radio" name="civ" value="M" checked> M</label></div>
+   <label for="nom">Nom et prénoms</label><input id="nom" type="text" autocomplete="name">
+   <label for="mat">Matricule</label><input id="mat" type="text">
+   <label for="min">Ministère</label><input id="min" type="text">
+   <label for="sec">Section syndicale (IEPP / DRENA)</label><input id="sec" type="text">
+   <label for="srv">Service</label><input id="srv" type="text">
+   <label for="loc">Localité</label><input id="loc" type="text">
+   <label for="con">Contacts</label><input id="con" type="tel">
+  </div>
+  <div class="photo">
+   <canvas id="pv" width="450" height="600"></canvas>
+   <input id="file" type="file" accept="image/*" hidden>
+   <button class="btn" id="pick" type="button">Ajouter ma photo</button>
+   <div class="tools" id="tools" hidden>
+    <label style="display:flex;gap:6px"><input type="checkbox" id="auto" checked> Amélioration automatique</label>
+    <label>Luminosité <input type="range" id="lum" min="-40" max="40" value="0"></label>
+    <label>Netteté <input type="range" id="net" min="0" max="100" value="40"></label>
+    <button class="btn" id="ia" type="button" hidden>Analyse IA de la photo</button>
+    <div id="iaout"></div>
+   </div>
+  </div>
+ </div>
+ <p class="para">Autorise la Direction de la Solde à opérer au profit du Syndicat <b>CESEFCI,</b> un précompte d’un montant de quatre mille francs (4000 FCFA) sur mon traitement afin de couvrir mes cotisations Syndicales annuelles par année.</p>
+ <div class="row2"><div><label for="lieu">Fait à</label><input id="lieu" type="text"></div><div><label for="dt">le</label><input id="dt" type="date"></div></div>
+ <label>Signature (dessinez avec le doigt ou la souris)</label>
+ <canvas id="sig" width="640" height="220"></canvas>
+ <button class="btn" id="clr" type="button">Effacer la signature</button>
+ <div class="pj"><b>Pièce jointe</b><br>Photocopie de pièce d’identité en cours de validité</div>
+ <div class="actions">
+  <button class="btn main" id="send" type="button">Envoyer ma fiche</button>
+  <button class="btn" id="pdf" type="button">Télécharger en PDF</button>
+  <button class="btn" id="doc" type="button">Télécharger en Word</button>
+  <button class="btn main" id="wa" type="button">Envoyer par WhatsApp</button>
+ </div>
+ <div id="msg"></div>
+ <div class="foot">Siege Social Abidjan, Yopougon-Sideci. Email: cesefci@gmail.com</div>
+</div>
+<div id="admin"><h2>Espace administrateur : fiches reçues</h2><div id="list">Chargement…</div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const LOGO="data:image/jpeg;base64,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";
+const T="Autorise la Direction de la Solde à opérer au profit du Syndicat CESEFCI, un précompte d’un montant de quatre mille francs (4000 FCFA) sur mon traitement afin de couvrir mes cotisations Syndicales annuelles par année.";
+$("dt").valueAsDate=new Date();
+const say=t=>{$("msg").textContent=t};
+
+/* ---------- Photo : recadrage 3:4 + amélioration automatique ---------- */
+const pv=$("pv"),pc=pv.getContext("2d");let orig=null,hasPhoto=false;
+$("pick").onclick=()=>$("file").click();
+$("file").onchange=e=>{const f=e.target.files[0];if(!f)return;const im=new Image();
+ im.onload=()=>{const c=document.createElement("canvas");c.width=450;c.height=600;const x=c.getContext("2d");
+  const s=Math.max(450/im.width,600/im.height),w=im.width*s,h=im.height*s;x.drawImage(im,(450-w)/2,(600-h)/2.4,w,h);
+  orig=x.getImageData(0,0,450,600);hasPhoto=true;$("tools").hidden=false;render();URL.revokeObjectURL(im.src)};
+ im.src=URL.createObjectURL(f)};
+["auto","lum","net"].forEach(i=>$(i).oninput=render);
+function render(){if(!orig)return;const d=new ImageData(new Uint8ClampedArray(orig.data),450,600),p=d.data;
+ if($("auto").checked){const h=new Array(256).fill(0);let s=0;
+  for(let i=0;i<p.length;i+=4){const l=(p[i]*.3+p[i+1]*.59+p[i+2]*.11)|0;h[l]++;s+=l}
+  const n=p.length/4;let a=0,lo=0,hi=255;for(let v=0;v<256;v++){a+=h[v];if(a>=n*.01){lo=v;break}}
+  a=0;for(let v=255;v>=0;v--){a+=h[v];if(a>=n*.01){hi=v;break}}
+  const k=255/Math.max(hi-lo,40),mean=Math.min(Math.max((s/n-lo)*k,40),215),g=Math.log(125/255)/Math.log(mean/255);
+  for(let i=0;i<p.length;i+=4)for(let c=0;c<3;c++){let v=Math.min(Math.max((p[i+c]-lo)*k,0),255);p[i+c]=255*Math.pow(v/255,g)}}
+ const L=+$("lum").value;if(L)for(let i=0;i<p.length;i+=4)for(let c=0;c<3;c++)p[i+c]=Math.min(Math.max(p[i+c]+L,0),255);
+ const A=$("net").value/100;if(A>0){const o=new Uint8ClampedArray(p),W=450;
+  for(let y=1;y<599;y++)for(let x=1;x<W-1;x++)for(let c=0;c<3;c++){const i=(y*W+x)*4+c;
+   const e=4*o[i]-o[i-4]-o[i+4]-o[i-W*4]-o[i+W*4];p[i]=Math.min(Math.max(o[i]+A*.6*e,0),255)}}
+ pc.putImageData(d,0,0)}
+claude.use("sample").then(async s=>{try{const l=s&&await s.limits();if(l&&l.images)$("ia").hidden=false;$("ia").onclick=async()=>{
+ $("iaout").textContent="Analyse en cours…";try{const b=await new Promise(r=>pv.toBlob(r,"image/jpeg",.8));
+ const r=await s("Cette photo est destinée à une fiche d’adhésion (photo d’identité). En 2 phrases courtes en français, dis si le visage est net, centré, bien éclairé, et donne un conseil si besoin. Ne décris pas l’identité de la personne.",{images:[b],modelTier:"quick"});
+ $("iaout").textContent=r.text}catch(e){$("iaout").textContent="Analyse indisponible."}}}catch(e){}}).catch(()=>{});
+
+/* ---------- Signature ---------- */
+const sg=$("sig"),sx=sg.getContext("2d");let dr=false,signed=false;sx.lineWidth=3;sx.lineCap="round";sx.strokeStyle="#111";
+const pt=e=>{const r=sg.getBoundingClientRect();return[(e.clientX-r.left)*sg.width/r.width,(e.clientY-r.top)*sg.height/r.height]};
+sg.onpointerdown=e=>{dr=true;sg.setPointerCapture(e.pointerId);const[x,y]=pt(e);sx.beginPath();sx.moveTo(x,y);signed=true};
+sg.onpointermove=e=>{if(!dr)return;const[x,y]=pt(e);sx.lineTo(x,y);sx.stroke()};
+sg.onpointerup=()=>{dr=false};
+$("clr").onclick=()=>{sx.clearRect(0,0,sg.width,sg.height);signed=false};
+
+/* ---------- Données ---------- */
+function collect(){const civ=document.querySelector("input[name=civ]:checked").value,sc=document.createElement("canvas");sc.width=320;sc.height=110;
+ const x=sc.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,320,110);x.drawImage(sg,0,0,320,110);
+ const ph=document.createElement("canvas");ph.width=300;ph.height=400;ph.getContext("2d").drawImage(pv,0,0,300,400);
+ return{civ,nom:$("nom").value.trim(),mat:$("mat").value.trim(),min:$("min").value.trim(),sec:$("sec").value.trim(),srv:$("srv").value.trim(),loc:$("loc").value.trim(),con:$("con").value.trim(),lieu:$("lieu").value.trim(),date:$("dt").value,
+  photo:hasPhoto?ph.toDataURL("image/jpeg",.8):"",sign:signed?sc.toDataURL("image/jpeg",.7):"",created:Date.now()}}
+const fr=d=>d?d.split("-").reverse().join("/"):"";
+const rows=d=>[["Mme – Mlle – M",d.civ+" "+d.nom],["Matricule",d.mat],["Ministère",d.min],["Section syndicale (IEPP / DRENA)",d.sec],["Service",d.srv],["Localité",d.loc],["Contacts",d.con]];
+const u8=u=>Uint8Array.from(atob(u.split(",")[1]),c=>c.charCodeAt(0));
+const fname=(d,e)=>"Fiche_adhesion_CESEFCI_"+(d.nom||"adherent").replace(/[^\w]+/g,"_")+"."+e;
+async function save(blob,name){const dl=await claude.use("downloads");if(!dl){say("Téléchargement indisponible dans ce navigateur.");return}
+ try{await dl.save({filename:name,data:blob});say("Fichier prêt : "+name)}catch(e){if(e.code!=="declined")say("Échec du téléchargement ("+(e.code||"erreur")+").")}}
+
+/* ---------- PDF ---------- */
+async function makePdf(d){const{jsPDF}=window.jspdf,p=new jsPDF({unit:"mm",format:"a4"}),G=[27,107,58];
+ p.addImage(LOGO,"JPEG",14,10,17,14);p.setFont("times","bold");p.setTextColor(...G);p.setFontSize(10);
+ p.text("Coordination des Enseignants et Encadrants du Secteur Education Formation de Côte d’Ivoire",34,15);p.text("0546506074/0758043086",105,21,{align:"center"});
+ p.setDrawColor(...G);p.line(14,27,196,27);p.setTextColor(0);p.setFontSize(10.5);
+ p.text("Récépissé N°102/DAA/DAJRI/2024 : PORTANT DECLARATION DE LA CESEFCI",16,36);p.setFont("times","normal");
+ p.text("Siège Social : Abidjan Yopougon",16,42);p.text("Boîte postale :",16,48);p.text("Tél : 0758043086",90,48);p.text("Cel : 0546506074",16,54);p.text("E-mail : cesefci@gmail.com/israel639mea@mail.com/",16,60);
+ p.rect(30,66,150,10);p.setFont("times","bold");p.setFontSize(12);p.text("FICHE D’ADHESION ET D’AUTORISATION DE PRECOMPTE",105,72.5,{align:"center"});
+ p.setFontSize(12);p.text("Je soussigné(e),",16,88);if(d.photo)p.addImage(d.photo,"JPEG",160,82,34,45);
+ p.setFont("times","normal");p.setFontSize(11);let y=96;
+ rows(d).forEach(([k,v])=>{p.text(k+" : "+v,16,y);y+=8});
+ y+=4;p.text(p.splitTextToSize(T,178),16,y);y+=26;
+ p.text("Fait à "+d.lieu+"   le "+fr(d.date),110,y);y+=6;p.setFont("times","bold");p.text("Signature",125,y+4);
+ if(d.sign)p.addImage(d.sign,"JPEG",110,y+6,50,17);
+ p.text("Pièce jointe",16,y+34);p.setFont("times","normal");p.setFontSize(10);p.text("Photocopie de pièce d’identité en cours de validité",16,y+39);
+ p.setDrawColor(...G);p.line(14,280,196,280);p.setFont("times","bold");p.setTextColor(...G);p.text("Siege Social Abidjan, Yopougon-Sideci. Email: cesefci@gmail.com",105,286,{align:"center"});
+ return p.output("blob")}
+
+/* ---------- Word ---------- */
+async function makeDoc(d){const X=window.docx,F="Times New Roman",G="1B6B3A";
+ const P=(t,o={})=>new X.Paragraph({spacing:{after:80},alignment:o.al,children:[new X.TextRun({text:t,bold:o.b,font:F,size:o.s||22,color:o.c})]});
+ const ch=[new X.Paragraph({children:[new X.ImageRun({type:"jpg",data:u8(LOGO),transformation:{width:60,height:48}}),new X.TextRun({text:"  Coordination des Enseignants et Encadrants du Secteur Education Formation de Côte d’Ivoire",bold:true,font:F,size:20,color:G})],border:{bottom:{style:X.BorderStyle.SINGLE,size:8,color:G,space:4}}}),
+ P("0546506074/0758043086",{b:1,c:G,al:X.AlignmentType.CENTER,s:20}),
+ new X.Paragraph({spacing:{before:160,after:80},children:[new X.TextRun({text:"Récépissé N°102/DAA/DAJRI/2024 : ",font:F,size:22}),new X.TextRun({text:"PORTANT DECLARATION DE LA CESEFCI",bold:true,font:F,size:22})]}),
+ P("Siège Social : Abidjan Yopougon"),P("Boîte postale :      Tél : 0758043086"),P("Cel : 0546506074"),P("E-mail : cesefci@gmail.com/israel639mea@mail.com/"),
+ new X.Paragraph({alignment:X.AlignmentType.CENTER,spacing:{before:240,after:240},border:{top:{style:X.BorderStyle.SINGLE,size:6,space:6},bottom:{style:X.BorderStyle.SINGLE,size:6,space:6},left:{style:X.BorderStyle.SINGLE,size:6,space:6},right:{style:X.BorderStyle.SINGLE,size:6,space:6}},children:[new X.TextRun({text:"FICHE D’ADHESION ET D’AUTORISATION DE PRECOMPTE",bold:true,font:F,size:24})]}),
+ P("Je soussigné(e),",{b:1,s:24})];
+ if(d.photo)ch.push(new X.Paragraph({alignment:X.AlignmentType.RIGHT,children:[new X.ImageRun({type:"jpg",data:u8(d.photo),transformation:{width:100,height:133}})]}));
+ rows(d).forEach(([k,v])=>ch.push(P(k+" : "+v)));
+ ch.push(new X.Paragraph({alignment:X.AlignmentType.JUSTIFIED,spacing:{before:200,after:300},children:[new X.TextRun({text:T,font:F,size:22})]}),
+ P("Fait à "+d.lieu+"   le "+fr(d.date),{al:X.AlignmentType.RIGHT}),P("Signature",{b:1,al:X.AlignmentType.RIGHT}));
+ if(d.sign)ch.push(new X.Paragraph({alignment:X.AlignmentType.RIGHT,children:[new X.ImageRun({type:"jpg",data:u8(d.sign),transformation:{width:150,height:52}})]}));
+ ch.push(P("Pièce jointe",{b:1}),P("Photocopie de pièce d’identité en cours de validité",{s:20}));
+ const doc=new X.Document({sections:[{properties:{page:{size:{width:11906,height:16838}}},children:ch,footers:{default:new X.Footer({children:[P("Siege Social Abidjan, Yopougon-Sideci. Email: cesefci@gmail.com",{b:1,c:G,al:X.AlignmentType.CENTER,s:20})]})}}]});
+ return X.Packer.toBlob(doc)}
+
+const need=()=>{const d=collect();if(!d.nom){say("Veuillez renseigner votre nom et prénoms.");return null}return d};
+$("pdf").onclick=async()=>{const d=need();if(d)save(await makePdf(d),fname(d,"pdf"))};
+$("doc").onclick=async()=>{if(!window.docx){say("Génération Word indisponible.");return}const d=need();if(d)save(await makeDoc(d),fname(d,"docx"))};
+$("send").onclick=async()=>{const d=need();if(!d)return;if(!d.sign){say("Veuillez signer dans le cadre prévu.");return}
+ try{const db=await claude.use("db"),u=await claude.use("user");if(!db||!u)throw 0;await db.doc("adhesions/"+await u.id()).set(d);say("Merci ! Votre fiche a bien été transmise au syndicat. Vous pouvez aussi la télécharger ci-dessus.")}
+ catch(e){say("Envoi direct impossible depuis ce lien. Téléchargez votre fiche en PDF ou Word et transmettez-la au syndicat (cesefci@gmail.com).")}};
+
+/* ---------- WhatsApp ---------- */
+const WA="2250758043086";
+$("wa").onclick=async()=>{const d=need();if(!d)return;
+ const txt="FICHE D’ADHESION CESEFCI\n"+rows(d).map(r=>r[0]+" : "+r[1]).join("\n")+"\nFait à "+d.lieu+" le "+fr(d.date)+"\nJe autorise un précompte de 4000 FCFA pour mes cotisations syndicales annuelles.";
+ try{const f=new File([await makePdf(d)],fname(d,"pdf"),{type:"application/pdf"});
+  if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],text:txt});say("Choisissez WhatsApp puis le contact du syndicat pour envoyer votre fiche PDF.");return}}catch(e){if(e&&e.name==="AbortError")return}
+ window.open("https://wa.me/"+WA+"?text="+encodeURIComponent(txt),"_blank");
+ say("WhatsApp s’ouvre avec votre message. Pensez à joindre aussi votre fiche PDF (bouton « Télécharger en PDF »), votre photo et votre pièce d’identité.")};
+
+/* ---------- Espace administrateur ---------- */
+claude.use("user").then(async u=>{if(!u||!(await u.isOwner()))return;const db=await claude.use("db");if(!db)return;$("admin").style.display="block";
+ db.collection("adhesions").onSnapshot(s=>{const l=$("list");l.textContent="";if(!s.docs.length)l.textContent="Aucune fiche reçue pour le moment.";
+  s.docs.forEach(x=>{const d=x.data(),r=document.createElement("div");r.className="it";const t=document.createElement("span");t.textContent=d.civ+" "+d.nom+" · "+d.mat+" · "+d.loc;r.appendChild(t);
+   const b=(n,f)=>{const e=document.createElement("button");e.className="btn";e.textContent=n;e.onclick=f;r.appendChild(e)};
+   b("PDF",async()=>save(await makePdf(d),fname(d,"pdf")));b("Word",async()=>save(await makeDoc(d),fname(d,"docx")));l.appendChild(r)})},()=>{$("list").textContent="Lecture impossible."})}).catch(()=>{});
+</script>
+</body>
+</html>
