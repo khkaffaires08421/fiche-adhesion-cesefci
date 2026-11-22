@@ -161,8 +161,21 @@ const rows=d=>[["Mme – Mlle – M",d.civ+" "+d.nom],["Matricule",d.mat],["Mini
 const u8=u=>Uint8Array.from(atob(u.split(",")[1]),c=>c.charCodeAt(0));
 const fname=(d,e)=>"Fiche_adhesion_CESEFCI_"+(d.nom||"adherent").replace(/[^\w]+/g,"_")+"."+e;
 async function save(blob,name){
- try{const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);say("Téléchargement lancé : "+name)}
- catch(e){say("Échec du téléchargement. Veuillez réessayer.")}}
+ if(!blob){say("Le document n’a pas pu être créé.");return false}
+ let url="";
+ try{
+  url=URL.createObjectURL(blob);
+  const a=document.createElement("a");a.href=url;a.download=name;a.style.display="none";
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),60000);
+  say("Téléchargement lancé : "+name+". Vérifiez le dossier Téléchargements.");return true;
+ }catch(e){
+  if(url){try{window.open(url,"_blank")}catch(_){}}
+  say("Le téléchargement automatique est bloqué. Le document va s’ouvrir : utilisez ensuite Enregistrer sous.");
+  if(url)setTimeout(()=>URL.revokeObjectURL(url),60000);
+  return false;
+ }
+}
 
 /* ---------- PDF ---------- */
 async function makePdf(d){const{jsPDF}=window.jspdf,p=new jsPDF({unit:"mm",format:"a4"}),G=[27,107,58];
@@ -180,6 +193,15 @@ async function makePdf(d){const{jsPDF}=window.jspdf,p=new jsPDF({unit:"mm",forma
  if(d.sign)p.addImage(d.sign,"JPEG",110,y+6,50,17);
  p.text("Pièce jointe",16,y+34);p.setFont("times","normal");p.setFontSize(10);p.text("Copie de la CNI jointe en annexe.",16,y+39);
  p.setDrawColor(...G);p.line(14,280,196,280);p.setFont("times","bold");p.setTextColor(...G);p.text("Siege Social Abidjan, Yopougon-Sideci. Email: cesefci@gmail.com",105,286,{align:"center"});
+ if(d.cniRecto||d.cniVerso){
+  p.addPage();p.setFont("times","bold");p.setTextColor(...G);p.setFontSize(16);p.text("ANNEXE – PIECE D’IDENTITE",105,22,{align:"center"});
+  const cards=[{label:"CNI – RECTO",data:d.cniRecto,x:14},{label:"CNI – VERSO",data:d.cniVerso,x:106}];
+  for(const card of cards){if(!card.data)continue;
+   p.setFontSize(11);p.setTextColor(0);p.text(card.label,card.x+40,38,{align:"center"});
+   const fmt=card.data.startsWith("data:image/png")?"PNG":"JPEG";
+   p.addImage(card.data,fmt,card.x,44,86,56,undefined,"FAST");
+  }
+ }
  return p.output("blob")}
 
 /* ---------- Word ---------- */
@@ -197,28 +219,55 @@ async function makeDoc(d){const X=window.docx,F="Times New Roman",G="1B6B3A";
  P("Fait à "+d.lieu+"   le "+fr(d.date),{al:X.AlignmentType.RIGHT}),P("Signature",{b:1,al:X.AlignmentType.RIGHT}));
  if(d.sign)ch.push(new X.Paragraph({alignment:X.AlignmentType.RIGHT,children:[new X.ImageRun({type:"jpg",data:u8(d.sign),transformation:{width:150,height:52}})]}));
  ch.push(P("Pièce jointe",{b:1}),P("Copie de la CNI jointe en annexe.",{s:20}));
- if(d.cniRecto||d.cniVerso){ch.push(new X.Paragraph({pageBreakBefore:true,children:[new X.TextRun({text:"ANNEXE – PIÈCE D’IDENTITÉ",bold:true,font:F,size:28,color:G})]}));
-  if(d.cniRecto)ch.push(P("CNI – RECTO",{b:1}),new X.Paragraph({children:[new X.ImageRun({type:"jpg",data:u8(d.cniRecto),transformation:{width:420,height:260}})]}));
-  if(d.cniVerso)ch.push(P("CNI – VERSO",{b:1}),new X.Paragraph({children:[new X.ImageRun({type:"jpg",data:u8(d.cniVerso),transformation:{width:420,height:260}})]}));
+ if(d.cniRecto||d.cniVerso){
+  ch.push(new X.Paragraph({spacing:{before:160,after:100},children:[new X.TextRun({text:"ANNEXE – PIÈCE D’IDENTITÉ",bold:true,font:F,size:26,color:G})]}));
+  const imgs=[];
+  if(d.cniRecto){imgs.push(new X.TextRun({text:"CNI – RECTO     ",bold:true,font:F,size:18}));imgs.push(new X.ImageRun({type:d.cniRecto.startsWith("data:image/png")?"png":"jpg",data:u8(d.cniRecto),transformation:{width:225,height:140}}));}
+  if(d.cniVerso){imgs.push(new X.TextRun({text:"       CNI – VERSO     ",bold:true,font:F,size:18}));imgs.push(new X.ImageRun({type:d.cniVerso.startsWith("data:image/png")?"png":"jpg",data:u8(d.cniVerso),transformation:{width:225,height:140}}));}
+  ch.push(new X.Paragraph({keepNext:false,spacing:{before:80,after:80},children:imgs}));
  }
  const doc=new X.Document({sections:[{properties:{page:{size:{width:11906,height:16838}}},children:ch,footers:{default:new X.Footer({children:[P("Siege Social Abidjan, Yopougon-Sideci. Email: cesefci@gmail.com",{b:1,c:G,al:X.AlignmentType.CENTER,s:20})]})}}]});
  return X.Packer.toBlob(doc)}
 
 const need=()=>{const d=collect();if(!d.nom){say("Veuillez renseigner votre nom et prénoms.");return null}return d};
-$("pdf").onclick=async()=>{const d=need();if(d)save(await makePdf(d),fname(d,"pdf"))};
-$("doc").onclick=async()=>{if(!window.docx){say("Génération Word indisponible.");return}const d=need();if(d)save(await makeDoc(d),fname(d,"docx"))};
+$("pdf").onclick=async()=>{
+ const d=need();if(!d)return;const b=$("pdf");b.disabled=true;
+ try{if(!window.jspdf||!window.jspdf.jsPDF)throw new Error("La bibliothèque PDF n’est pas chargée. Vérifiez votre connexion Internet puis actualisez la page.");await save(await makePdf(d),fname(d,"pdf"))}
+ catch(e){say("Erreur PDF : "+(e.message||"impossible de créer le document"))}finally{b.disabled=false}
+};
+$("doc").onclick=async()=>{
+ const d=need();if(!d)return;const b=$("doc");b.disabled=true;
+ try{if(!window.docx)throw new Error("La bibliothèque Word n’est pas chargée. Vérifiez votre connexion Internet puis actualisez la page.");await save(await makeDoc(d),fname(d,"docx"))}
+ catch(e){say("Erreur Word : "+(e.message||"impossible de créer le document"))}finally{b.disabled=false}
+};
 $("send").onclick=async()=>{const d=need();if(!d)return;if(!d.sign){say("Veuillez signer dans le cadre prévu.");return}
  try{const db=await claude.use("db"),u=await claude.use("user");if(!db||!u)throw 0;await db.doc("adhesions/"+await u.id()).set(d);say("Merci ! Votre fiche a bien été transmise au syndicat. Vous pouvez aussi la télécharger ci-dessus.")}
  catch(e){say("Envoi direct impossible depuis ce lien. Téléchargez votre fiche en PDF ou Word et transmettez-la au syndicat (cesefci@gmail.com).")}};
 
 /* ---------- WhatsApp ---------- */
 const WA="2250758043086";
-$("wa").onclick=async()=>{const d=need();if(!d)return;
+$("wa").onclick=async()=>{
+ const d=need();if(!d)return;
  const txt="FICHE D’ADHESION CESEFCI\n"+rows(d).map(r=>r[0]+" : "+r[1]).join("\n")+"\nFait à "+d.lieu+" le "+fr(d.date)+"\nJe autorise un précompte de 4000 FCFA pour mes cotisations syndicales annuelles.";
- try{const f=new File([await makePdf(d)],fname(d,"pdf"),{type:"application/pdf"});
-  if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],text:txt});say("Choisissez WhatsApp puis le contact du syndicat pour envoyer votre fiche PDF.");return}}catch(e){if(e&&e.name==="AbortError")return}
- window.open("https://wa.me/"+WA+"?text="+encodeURIComponent(txt),"_blank");
- say("WhatsApp s’ouvre avec votre message. Pensez à joindre aussi votre fiche PDF (bouton « Télécharger en PDF »), votre photo ainsi que les deux faces de votre CNI.")};
+ // Ouvrir une fenêtre immédiatement depuis le clic pour éviter le blocage des pop-up.
+ const waWindow=window.open("about:blank","_blank");
+ try{
+  if(!window.jspdf||!window.jspdf.jsPDF)throw new Error("La bibliothèque PDF n’est pas chargée.");
+  const f=new File([await makePdf(d)],fname(d,"pdf"),{type:"application/pdf"});
+  if(navigator.canShare&&navigator.canShare({files:[f]})){
+   try{if(waWindow)waWindow.close();await navigator.share({files:[f],text:txt,title:"Fiche d’adhésion CESEFCI"});say("Le PDF est prêt à être partagé. Choisissez WhatsApp, puis sélectionnez le destinataire CESEFCI : +225 07 58 04 30 86. Le message et le PDF seront proposés dans le partage.");return}
+   catch(e){if(e&&e.name==="AbortError"){if(waWindow)waWindow.close();return}}
+  }
+  await save(f,f.name);
+  const target="https://wa.me/"+WA+"?text="+encodeURIComponent(txt);
+  if(waWindow&&!waWindow.closed)waWindow.location.href=target;else window.location.href=target;
+  say("Conversation CESEFCI ouverte : +225 07 58 04 30 86. Le PDF est téléchargé : dans WhatsApp, touchez le trombone, choisissez Document et sélectionnez le PDF. Ajoutez aussi les pièces demandées si elles ne figurent pas dans le PDF.");
+ }catch(e){
+  const target="https://wa.me/"+WA+"?text="+encodeURIComponent(txt);
+  if(waWindow&&!waWindow.closed)waWindow.location.href=target;else window.location.href=target;
+  say("Conversation CESEFCI ouverte : +225 07 58 04 30 86. Si le PDF n’a pas été téléchargé, utilisez le bouton Télécharger en PDF puis joignez-le dans WhatsApp. Détail : "+(e.message||"erreur inconnue"));
+ }
+};
 
 /* ---------- Espace administrateur ---------- */
 if(typeof claude!=="undefined"&&claude.use)claude.use("user").then(async u=>{if(!u||!(await u.isOwner()))return;const db=await claude.use("db");if(!db)return;$("admin").style.display="block";
